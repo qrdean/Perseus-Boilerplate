@@ -96,11 +96,6 @@ pub async fn get_build_state(
         None => ("".to_string(), "".to_string()),
     };
 
-    let book = match _book.first() {
-        Some(book) => book.clone(),
-        None => BookData::new(),
-    };
-
     Ok(IndexPageState {
         greeting: "Hello World!".to_string(),
         data: body.to_string(),
