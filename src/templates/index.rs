@@ -23,21 +23,6 @@ pub struct BookData {
     publishDate: String,
 }
 
-impl BookData {
-    pub fn new() -> BookData {
-        BookData {
-            id: -1,
-            created_at: "".to_string(),
-            lccn: "".to_string(),
-            isbn: "".to_string(),
-            title: "".to_string(),
-            author: "".to_string(),
-            publishDate: "".to_string(),
-        }
-
-    }
-}
-
 #[perseus::template_rx]
 pub fn index_page(state: IndexPageStateRx) -> View<G> {
     view! {
