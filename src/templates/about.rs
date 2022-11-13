@@ -5,6 +5,7 @@ use sycamore::prelude::{view, Html, SsrNode, View};
 pub fn about_page() -> View<G> {
     view! {
         p { "About." }
+        p { "new" }
     }
 }
 

@@ -2,6 +2,8 @@ use perseus::{Html, RenderFnResultWithCause, SsrNode, Template};
 use sycamore::prelude::{view, View};
 use serde::{Deserialize, Serialize};
 
+use crate::global_state::AppStateRx;
+
 #[perseus::make_rx(IndexPageStateRx)]
 pub struct IndexPageState {
     pub greeting: String,
@@ -12,7 +14,6 @@ pub struct IndexPageState {
 
 #[derive(Deserialize)]
 #[derive(Serialize)]
-#[derive(Clone)]
 pub struct BookData {
     id: i32,
     created_at: String,
@@ -24,12 +25,17 @@ pub struct BookData {
 }
 
 #[perseus::template_rx]
-pub fn index_page(state: IndexPageStateRx) -> View<G> {
+pub fn index_page(state: IndexPageStateRx, global_state: AppStateRx) -> View<G> {
+    let test = global_state.test;
+    let test_2 = test.clone();
     view! {
         p { (state.greeting.get()) (state.data.get()) }
         div { (state.book.get())}
         div { (state.author.get()) }
+        p { (test.get()) }
+        input(bind:value = test_2)
         a(href = "about", id = "about-link") { "About!" }
+        a(href = "testpage", id = "test-link") { "Test Page!" }
     }
 }
 
