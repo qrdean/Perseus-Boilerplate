@@ -16,7 +16,9 @@ html {
  * Remove default margin.
  */
 
-body {
+body,
+#root,
+.__perseus_content {
   margin: 0;
 }
 

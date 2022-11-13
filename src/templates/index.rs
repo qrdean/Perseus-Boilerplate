@@ -29,13 +29,18 @@ pub fn index_page(state: IndexPageStateRx, global_state: AppStateRx) -> View<G> 
     let test = global_state.test;
     let test_2 = test.clone();
     view! {
+        h1 { "Some Heading" }
         p { (state.greeting.get()) (state.data.get()) }
         div { (state.book.get())}
         div { (state.author.get()) }
         p { (test.get()) }
         input(bind:value = test_2)
+        br()
         a(href = "about", id = "about-link") { "About!" }
-        a(href = "testpage", id = "test-link") { "Test Page!" }
+        br()
+        a(class="button button-primary", href = "testpage", id = "test-link") { "Test Page!" }
+        br()
+        button(id = "test button", class="button button-primary", href="about") { "Test Button" }
     }
 }
 
