@@ -1,6 +1,9 @@
 use perseus::{Html, RenderFnResultWithCause, Template};
 use sycamore::prelude::{view, SsrNode, View};
 
+use crate::global_state::AppStateRx;
+use crate::components::nav::NavComponent;
+
 #[perseus::make_rx(TestPageStateRx)]
 pub struct TestPageState {
     pub username: String,
@@ -8,7 +11,7 @@ pub struct TestPageState {
 
 // This macro will make our state reactive *and* store it in the page state store, which means it'll be the same even if we go to the about page and come back (as long as we're in the same session)
 #[perseus::template_rx]
-pub fn test_page(state: TestPageStateRx) -> View<G> {
+pub fn test_page(state: TestPageStateRx, global_state: AppStateRx) -> View<G> {
     // Bit unergonomic here. Needed to bind:value to the username
     // This will be unnecessary though with newer sycamore version, make the 
     // switch when 0.4.0 of Perseus and 0.8.x sycamore releases stable
@@ -16,8 +19,10 @@ pub fn test_page(state: TestPageStateRx) -> View<G> {
     let username_2 = username.clone();
 
     view! {
+        NavComponent()
         p { (format!("Greetings, {}!", username.get())) }
         input(bind:value = username_2, placeholder = "Username")
+        div { (global_state.test.get()) }
     }
 }
 
