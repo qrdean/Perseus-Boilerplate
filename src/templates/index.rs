@@ -11,9 +11,9 @@ pub struct IndexPageState {
     pub data: String,
 }
 
-#[derive(Deserialize,Serialize,Clone)]
+#[derive(Deserialize,Serialize,Clone,PartialEq,Eq,Hash)]
 pub struct BookData {
-    id: i32,
+    pub id: i32,
     created_at: String,
     lccn: String,
     isbn: String,

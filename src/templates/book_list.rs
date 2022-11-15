@@ -1,5 +1,5 @@
 use perseus::{Html, RenderFnResultWithCause, Template};
-use sycamore::prelude::{view, SsrNode, View};
+use sycamore::prelude::{view, SsrNode, View, Keyed, KeyedProps};
 
 use crate::global_state::AppStateRx;
 use crate::components::nav::NavComponent;
@@ -17,15 +17,28 @@ pub fn test_page(state: BookListStateRx, global_state: AppStateRx) -> View<G> {
     // This will be unnecessary though with newer sycamore version, make the 
     // switch when 0.4.0 of Perseus and 0.8.x sycamore releases stable
     let data = state.data;
-    let (title, author) = match data.get().first() {
-        Some(book) => (book.title.clone(), book.author.clone()),
-        None => ("".to_string(), "".to_string()),
-    };
+    //let (title, author) = match data.get().first() {
+     //   Some(book) => (book.title.clone(), book.author.clone()),
+      //  None => ("".to_string(), "".to_string()),
+    //};
 
     view! {
         NavComponent()
-        p { (format!("Greetings, {}!", title)) }
-        p { (format!("Greetings, {}!", author)) }
+        label {"Search"}
+        input(type="text")
+        Keyed(KeyedProps {
+            iterable: data.handle(),
+            template: |x| view! {
+                div {
+                    p {
+                        span{ (x.title) }
+                        span{ (x.author) }
+                    }
+                } 
+            },
+            key: |x| x.id,
+        })
+
         div { (global_state.test.get()) }
     }
 }
