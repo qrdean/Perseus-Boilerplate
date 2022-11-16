@@ -1,5 +1,5 @@
-use perseus::{Html, RenderFnResultWithCause, SsrNode, Template};
-use sycamore::prelude::{view, View};
+use perseus::{Html, RenderFnResultWithCause, SsrNode, Template, web_log};
+use sycamore::prelude::{view, View, cloned};
 use serde::{Deserialize, Serialize};
 
 use crate::global_state::AppStateRx;
@@ -26,6 +26,9 @@ pub struct BookData {
 pub fn index_page(state: IndexPageStateRx, global_state: AppStateRx) -> View<G> {
     let test = global_state.test;
     let test_2 = test.clone();
+    let state_2 = state.data.clone();
+
+
     view! {
         NavComponent()
         h1 { "Some Heading" }
@@ -33,7 +36,34 @@ pub fn index_page(state: IndexPageStateRx, global_state: AppStateRx) -> View<G> 
         p { (test.get()) }
         input(bind:value = test_2)
         br()
-        button(id = "test button", class="button button-primary", href="about") { "Test Button" }
+        button(id = "test button", class="button button-primary", on:click=move |_| {
+            if G::IS_BROWSER {
+                web_log!("Hello im in browser");
+                perseus::spawn_local(cloned!(state_2 => async move {
+                    web_log!("try to call server");
+                    let res = reqwasm::http::Request::post("http://localhost:8000/subscriptions")
+                        .header("Content-Type", "application/x-www-form-urlencoded")
+                        .body("name=newperson&email=anotherperson%40gmail.com")
+                        .send()
+                        .await
+                        .expect("expect to work")
+                        .text()
+                        .await
+                        .expect("expect to work2")
+                        ;
+                        
+                        
+                        //.send_json(ureq::json!({
+                         //   "name": "new name",
+                          //  "email": "new_name@gmail.com"
+                        //})).expect("did not get post back")
+                        //.into_string().expect("did not go to string");
+                    state_2.set(res.to_string());
+                }))
+            }
+
+        }) 
+        { "Test Button" }
     }
 }
 
