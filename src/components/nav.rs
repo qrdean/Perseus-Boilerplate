@@ -19,6 +19,12 @@ pub fn nav_component() -> View<G> {
                 li(class="nav-item") {
                     a(class="button", href = "book_list", id = "book-list-link") { "Book List!" }
                 }
+                li(class="nav-item") {
+                    a(class="button", href = "locations", id = "locations-link") { "Book Locations!" }
+                }
+                li(class="nav-item") {
+                    a(class="button", href = "add_book", id = "add-book-link") { "Add a Book!" }
+                }
                 /*
                   li(class="nav-item has-dropdown") {
                     a(class="button",id="menu-button") {"Menu"}

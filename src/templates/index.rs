@@ -1,6 +1,5 @@
 use perseus::{Html, RenderFnResultWithCause, SsrNode, Template, web_log};
 use sycamore::prelude::{view, View, cloned};
-use serde::{Deserialize, Serialize};
 
 use crate::global_state::AppStateRx;
 use crate::components::nav::NavComponent;
@@ -11,58 +10,46 @@ pub struct IndexPageState {
     pub data: String,
 }
 
-#[derive(Deserialize,Serialize,Clone,PartialEq,Eq,Hash)]
-pub struct BookData {
-    pub id: i32,
-    created_at: String,
-    lccn: String,
-    isbn: String,
-    pub title: String,
-    pub author: String,
-    publishDate: String,
-}
-
 #[perseus::template_rx]
 pub fn index_page(state: IndexPageStateRx, global_state: AppStateRx) -> View<G> {
     let test = global_state.test;
     let test_2 = test.clone();
     let state_2 = state.data.clone();
 
+    let req = move |_| {
+        if G::IS_BROWSER {
+            web_log!("Hello im in browser");
+            let body ="name=newperson&email=anotherperson%40gmail.com"; 
+            perseus::spawn_local(cloned!(state_2 => async move {
+                web_log!("try to call server");
+                let res = reqwasm::http::Request::post("http://localhost:8000/subscriptions")
+                    .header("Content-Type", "application/x-www-form-urlencoded")
+                    .body(body)
+                    .send()
+                    .await
+                    .expect("expect to work")
+                    .text()
+                    .await
+                    .expect("expect to work2");
+                    
+                    
+                    //.send_json(ureq::json!({
+                     //   "name": "new name",
+                      //  "email": "new_name@gmail.com"
+                    //})).expect("did not get post back")
+                    //.into_string().expect("did not go to string");
+                state_2.set(res.to_string());
+            }))
+        }
+    }; 
 
     view! {
         NavComponent()
-        h1 { "Some Heading" }
         p { (state.greeting.get()) (state.data.get()) }
         p { (test.get()) }
         input(bind:value = test_2)
         br()
-        button(id = "test button", class="button button-primary", on:click=move |_| {
-            if G::IS_BROWSER {
-                web_log!("Hello im in browser");
-                perseus::spawn_local(cloned!(state_2 => async move {
-                    web_log!("try to call server");
-                    let res = reqwasm::http::Request::post("http://localhost:8000/subscriptions")
-                        .header("Content-Type", "application/x-www-form-urlencoded")
-                        .body("name=newperson&email=anotherperson%40gmail.com")
-                        .send()
-                        .await
-                        .expect("expect to work")
-                        .text()
-                        .await
-                        .expect("expect to work2")
-                        ;
-                        
-                        
-                        //.send_json(ureq::json!({
-                         //   "name": "new name",
-                          //  "email": "new_name@gmail.com"
-                        //})).expect("did not get post back")
-                        //.into_string().expect("did not go to string");
-                    state_2.set(res.to_string());
-                }))
-            }
-
-        }) 
+        button(id = "test button", class="button button-primary", on:click=req) 
         { "Test Button" }
     }
 }
@@ -99,7 +86,7 @@ pub async fn get_build_state(
     ).await?;
 
     Ok(IndexPageState {
-        greeting: "Hello World!".to_string(),
+        greeting: "Welcome To The Library!".to_string(),
         data: body.to_string(),
     })
 }

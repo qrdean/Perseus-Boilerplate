@@ -1,9 +1,20 @@
 use perseus::{Html, RenderFnResultWithCause, Template};
 use sycamore::prelude::{view, SsrNode, View, Keyed, KeyedProps};
+use serde::{Deserialize, Serialize};
 
 use crate::global_state::AppStateRx;
 use crate::components::nav::NavComponent;
-use crate::templates::index::BookData;
+
+#[derive(Deserialize,Serialize,Clone,PartialEq,Eq,Hash)]
+pub struct BookData {
+    pub id: i32,
+    created_at: String,
+    lccn: String,
+    isbn: String,
+    pub title: String,
+    pub author: String,
+    publishDate: String,
+}
 
 #[perseus::make_rx(BookListStateRx)]
 pub struct BookListState {

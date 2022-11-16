@@ -12,6 +12,8 @@ pub fn main<G: Html>() -> PerseusApp<G> {
         .template(crate::templates::about::get_template)
         .template(crate::templates::testpage::get_template)
         .template(crate::templates::book_list::get_template)
+        .template(crate::templates::locations::get_template)
+        .template(crate::templates::add_book::get_template)
         .error_pages(crate::error_pages::get_error_pages)
         .global_state_creator(crate::global_state::get_global_state_creator())
         .static_alias("/favicon.ico", "static/favicon.ico")
