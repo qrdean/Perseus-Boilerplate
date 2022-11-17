@@ -23,15 +23,8 @@ pub struct BookListState {
 
 // This macro will make our state reactive *and* store it in the page state store, which means it'll be the same even if we go to the about page and come back (as long as we're in the same session)
 #[perseus::template_rx]
-pub fn test_page(state: BookListStateRx, global_state: AppStateRx) -> View<G> {
-    // Bit unergonomic here. Needed to bind:value to the username
-    // This will be unnecessary though with newer sycamore version, make the 
-    // switch when 0.4.0 of Perseus and 0.8.x sycamore releases stable
+pub fn book_list_page(state: BookListStateRx, global_state: AppStateRx) -> View<G> {
     let data = state.data;
-    //let (title, author) = match data.get().first() {
-     //   Some(book) => (book.title.clone(), book.author.clone()),
-      //  None => ("".to_string(), "".to_string()),
-    //};
 
     view! {
         NavComponent()
@@ -57,13 +50,13 @@ pub fn test_page(state: BookListStateRx, global_state: AppStateRx) -> View<G> {
 #[perseus::head]
 pub fn head() -> View<SsrNode> {
     view! {
-        title { "Test Page" }
+        title { "Book List" }
     }
 }
 
 pub fn get_template<G: Html>() -> Template<G> {
     Template::new("book_list")
-        .template(test_page)
+        .template(book_list_page)
         .head(head)
         .build_state_fn(get_build_state)
 }
